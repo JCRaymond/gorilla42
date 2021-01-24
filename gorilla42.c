@@ -13,12 +13,10 @@ void gorilla42(u8* dst, u8* src) {
    u8 c,nc,m,h;
    i16 i,j,k;
 
-   c = src[0xff] << 7;
-   dst[0xff] = map[src[0xff] ^ (src[0xff] >> 1)];
-   for (i = 0xfe; i >= 0; i--) {
-      nc = src[i] << 7;
+   c = 0;
+   for (i = 0xff; i >= 0; i--) {
       dst[i] = map[src[i] ^ ((src[i] >> 1) | c)];
-      c = nc;
+      c = src[i] << 7;
    }
    for (i = 0; i < 8; i++) {
       for (j = 0; j < 0x100; j++)
@@ -29,18 +27,16 @@ void gorilla42(u8* dst, u8* src) {
                for (k = 0; k < 0x100; k++)
                   src[k] ^= dst[k];
             h = (~dst[0xff] & 0x80) >> 4;
-            c = dst[0] >> 7;
-            dst[0] = (dst[0] << 1) ^ (special[0] >> h);
-            for (k = 1; k < 0x100; k++) {
+            c = 0;
+            for (k = 0; k < 0x100; k++) {
                nc = dst[k] >> 7;
                dst[k] = ((dst[k] << 1) | c) ^ (special[k] >> h);
                c = nc;
             }
          }
       }
-      dst[0xff] = map[src[0xff] ^ (src[0xff] >> 1)];
-      c = src[0xff] << 7;
-      for (j = 0xfe; j >= 0; j--) {
+      c = 0;
+      for (j = 0xff; j >= 0; j--) {
          dst[j] = map[src[j] ^ ((src[j] >> 1) | c)];
          c = src[j] << 7;
       }
